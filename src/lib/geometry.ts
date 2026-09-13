@@ -211,9 +211,8 @@ function computeSaddle(params: JointParams): IntersectionResult {
   const templateHeight = maxCutDepth;
   const templateWidth = params.branchOd * Math.PI;
 
-  // Sort / close main hole for a sensible polyline (by main circumferential u)
-  mainHole.sort((a, b) => a.u - b.u);
-  // Re-center main hole v so min is 0
+  // Keep branch-θ sweep order so the main hole is a continuous closed loop.
+  // Re-center main hole v so min is 0; unwrap u may jump at the ±π seam.
   let minV = Infinity;
   let maxV = -Infinity;
   for (const p of mainHole) {
@@ -222,6 +221,26 @@ function computeSaddle(params: JointParams): IntersectionResult {
   }
   for (const p of mainHole) {
     p.v = p.v - minV;
+  }
+  // Continuity on circumferential unwrap: unwrap atan2 jump across seam
+  if (mainHole.length > 1) {
+    const circ = params.mainOd * Math.PI;
+    for (let i = 1; i < mainHole.length; i++) {
+      let du = mainHole[i].u - mainHole[i - 1].u;
+      while (du > circ / 2) {
+        mainHole[i].u -= circ;
+        du = mainHole[i].u - mainHole[i - 1].u;
+      }
+      while (du < -circ / 2) {
+        mainHole[i].u += circ;
+        du = mainHole[i].u - mainHole[i - 1].u;
+      }
+    }
+    // Shift so min u >= 0 for display
+    let minU = Math.min(...mainHole.map((p) => p.u));
+    if (minU < 0) {
+      for (const p of mainHole) p.u -= minU;
+    }
   }
 
   return {

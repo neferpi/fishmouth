@@ -30,7 +30,7 @@ export const metadata: Metadata = {
     description: SITE_DESCRIPTION,
   },
   robots: { index: true, follow: true },
-  icons: { icon: "/favicon.svg" },
+  icons: { icon: { url: "favicon.svg", type: "image/svg+xml" } },
 };
 
 export default function RootLayout({
