@@ -52,17 +52,23 @@ npm run build   # writes static site to out/
 
 Repo: [neferpi/fishmouth](https://github.com/neferpi/fishmouth)
 
-1. `npm run build` → `out/`
-2. Enable Pages → Deploy from branch `gh-pages` **or** GitHub Action uploading `out/`
-3. If serving from a project site (`/fishmouth/`), set `basePath` / `assetPrefix` in `next.config.ts`
-
-Suggested one-liner after build (orphan gh-pages branch):
+Static export lands in `out/`. For project Pages at `https://neferpi.github.io/fishmouth/`:
 
 ```bash
+GITHUB_PAGES=true npm run build
+# then publish out/ to the gh-pages branch, e.g.:
 npx gh-pages -d out
 ```
 
-Or open `out/index.html` via any static server.
+`GITHUB_PAGES=true` enables `basePath` / `assetPrefix` `/fishmouth` in `next.config.ts`.
+
+Then: **Settings → Pages → Deploy from branch `gh-pages` / root**.
+
+Local preview without basePath:
+
+```bash
+npm run build && npx serve out
+```
 
 ## Accuracy caveats
 
